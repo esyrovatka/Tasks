@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import update from "immutability-helper";
 export const STATUS_CONSTANTS = {
   incomplete: "incomplete",
   complete: "complete",
@@ -61,15 +62,26 @@ const useTodoList = () => {
     }
   };
 
+  const saveList = () => {
+    localStorage.setItem("MyList", JSON.stringify(tasksList));
+  };
+
+  const moveTask = useCallback((dragIndex, hoverIndex) => {
+    setTasksList((prevCards) =>
+      update(prevCards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevCards[dragIndex]],
+        ],
+      })
+    );
+  }, []);
+
   useEffect(() => {
     if (filterVal === "All") return setFilterList(tasksList);
     const res = tasksList.filter((item) => item.status === filterVal);
     setFilterList(res);
   }, [tasksList, filterVal]);
-
-  const saveList = () => {
-    localStorage.setItem("MyList", JSON.stringify(tasksList));
-  };
 
   return {
     filterList,
@@ -79,6 +91,7 @@ const useTodoList = () => {
     changeTextInTask,
     changeFilterTask,
     saveList,
+    moveTask,
   };
 };
 

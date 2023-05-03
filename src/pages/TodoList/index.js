@@ -3,9 +3,11 @@ import { TodoListStyles } from "./TodoList.styles";
 import useTodoList, { STATUS_CONSTANTS } from "./useTodoList";
 import EmptyList from "../../components/EmptyList";
 import AddTask from "../../components/Modal/AddTask";
-import Task from "../../components/Task";
 import useToggleModal from "../../hooks/useToggleModal";
 import { Button, Select } from "antd";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Task from "../../components/Task";
 
 const TodoList = () => {
   const {
@@ -16,11 +18,13 @@ const TodoList = () => {
     changeFilterTask,
     filterList,
     saveList,
+    moveTask,
   } = useTodoList();
   const {
     isModalOpen: isAddTaskModalOpen,
     onToggleModal: onAddTaskModalToggle,
   } = useToggleModal();
+
   return (
     <TodoListStyles>
       <h1>TodoList:</h1>
@@ -53,17 +57,21 @@ const TodoList = () => {
         ]}
       />
       {!!filterList.length ? (
-        filterList.map((item) => (
-          <Task
-            key={item.id}
-            id={item.id}
-            text={item.text}
-            status={item.status}
-            toggleTaskStatus={toggleTaskStatus}
-            deleteTask={deleteTask}
-            changeTextInTask={changeTextInTask}
-          />
-        ))
+        <DndProvider backend={HTML5Backend}>
+          {filterList.map((task, i) => (
+            <Task
+              key={task.id}
+              index={i}
+              id={task.id}
+              text={task.text}
+              moveTask={moveTask}
+              status={task.status}
+              toggleTaskStatus={toggleTaskStatus}
+              deleteTask={deleteTask}
+              changeTextInTask={changeTextInTask}
+            />
+          ))}
+        </DndProvider>
       ) : (
         <EmptyList />
       )}

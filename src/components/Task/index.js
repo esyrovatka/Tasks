@@ -4,6 +4,7 @@ import { Button, Col, Input, Typography } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import DeleteTask from "../Modal/DeleteTask";
 import useToggleModal from "../../hooks/useToggleModal";
+import useTask from "./useTask";
 
 const Task = ({
   text,
@@ -12,6 +13,8 @@ const Task = ({
   id,
   deleteTask,
   changeTextInTask,
+  moveTask,
+  index,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const { isModalOpen, onToggleModal } = useToggleModal();
@@ -29,54 +32,58 @@ const Task = ({
   const handleChange = (e) => {
     setNewTextTask(e.target.value);
   };
-  return (
-    <TaskStyles>
-      <DeleteTask
-        isOpen={isModalOpen}
-        onCancel={onToggleModal}
-        deleteTask={deleteTask}
-        id={id}
-      />
 
-      <Col span={5}>
-        Task:
-        {isEditMode ? (
-          <Input
-            className="content"
-            value={newTextTask}
-            onChange={handleChange}
-          />
-        ) : (
-          <Typography className="content">{text}</Typography>
-        )}
-      </Col>
-      <Col span={5}>
-        Status:
-        <Typography
-          className={`status ${status}`}
-          onClick={() => toggleTaskStatus(id)}
-        >
-          {status}
-        </Typography>
-      </Col>
-      <Col span={2}>
-        <Typography onClick={() => onToggleModal()}>
-          <DeleteOutlined />
-        </Typography>
-      </Col>
-      <Col span={2}>
-        {isEditMode ? (
-          <>
-            <Button onClick={() => saveNewText()}>Save</Button>
-            <Button onClick={() => cancelNewText()}>Cancel</Button>
-          </>
-        ) : (
-          <Typography onClick={() => setIsEditMode((prev) => !prev)}>
-            <EditOutlined />
+  const { ref, opacity, handlerId } = useTask({ moveTask, index, id });
+  return (
+    <div ref={ref} style={{ opacity }} data-handler-id={handlerId}>
+      <TaskStyles>
+        <DeleteTask
+          isOpen={isModalOpen}
+          onCancel={onToggleModal}
+          deleteTask={deleteTask}
+          id={id}
+        />
+
+        <Col span={5}>
+          Task:
+          {isEditMode ? (
+            <Input
+              className="content"
+              value={newTextTask}
+              onChange={handleChange}
+            />
+          ) : (
+            <Typography className="content">{text}</Typography>
+          )}
+        </Col>
+        <Col span={5}>
+          Status:
+          <Typography
+            className={`status ${status}`}
+            onClick={() => toggleTaskStatus(id)}
+          >
+            {status}
           </Typography>
-        )}
-      </Col>
-    </TaskStyles>
+        </Col>
+        <Col span={2}>
+          <Typography onClick={() => onToggleModal()}>
+            <DeleteOutlined />
+          </Typography>
+        </Col>
+        <Col span={2}>
+          {isEditMode ? (
+            <>
+              <Button onClick={() => saveNewText()}>Save</Button>
+              <Button onClick={() => cancelNewText()}>Cancel</Button>
+            </>
+          ) : (
+            <Typography onClick={() => setIsEditMode((prev) => !prev)}>
+              <EditOutlined />
+            </Typography>
+          )}
+        </Col>
+      </TaskStyles>
+    </div>
   );
 };
 
