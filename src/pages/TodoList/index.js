@@ -75,7 +75,9 @@ const TodoList = () => {
       ) : (
         <EmptyList />
       )}
-      {filterList.length && <Button onClick={saveList}>Save Todo List</Button>}
+      {!!filterList.length && (
+        <Button onClick={saveList}>Save Todo List</Button>
+      )}
     </TodoListStyles>
   );
 };

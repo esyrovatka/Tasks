@@ -1,7 +1,7 @@
 In the project directory, you can run:
 
-### `yarn install`
+### `yarn install` or `npm install`
 
 AND
 
-### `yarn run start`
+### `yarn run start` or `npm start`
