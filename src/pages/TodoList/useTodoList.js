@@ -4,7 +4,8 @@ export const STATUS_CONSTANTS = {
   complete: "complete",
 };
 const useTodoList = () => {
-  const [tasksList, setTasksList] = useState([]);
+  const initialValue = JSON.parse(localStorage.getItem("MyList")) || [];
+  const [tasksList, setTasksList] = useState(initialValue);
 
   const addNewTask = (taskText) => {
     const newList = JSON.parse(JSON.stringify(tasksList));
@@ -41,28 +42,43 @@ const useTodoList = () => {
     findTask.text = text;
     setTasksList(newList);
   };
+  const [filterVal, setFilterVal] = useState("All");
+
+  const [filterList, setFilterList] = useState([]);
 
   const changeFilterTask = (value) => {
-    const newList = JSON.parse(JSON.stringify(tasksList));
-    let res = [];
-    if (value === 1) {
-      res = newList;
-    } else if (value === 2) {
-      res = newList.filter((item) => item.status === STATUS_CONSTANTS.complete);
-    } else if (value === 3) {
-      res = newList.filter(
-        (item) => item.status === STATUS_CONSTANTS.incomplete
-      );
+    switch (value) {
+      case 2:
+        setFilterVal(STATUS_CONSTANTS.complete);
+
+        break;
+      case 3:
+        setFilterVal(STATUS_CONSTANTS.incomplete);
+
+        break;
+      default:
+        setFilterVal("All");
     }
   };
 
+  useEffect(() => {
+    if (filterVal === "All") return setFilterList(tasksList);
+    const res = tasksList.filter((item) => item.status === filterVal);
+    setFilterList(res);
+  }, [tasksList, filterVal]);
+
+  const saveList = () => {
+    localStorage.setItem("MyList", JSON.stringify(tasksList));
+  };
+
   return {
-    tasksList,
+    filterList,
     addNewTask,
     toggleTaskStatus,
     deleteTask,
     changeTextInTask,
     changeFilterTask,
+    saveList,
   };
 };
 

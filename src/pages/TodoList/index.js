@@ -5,17 +5,17 @@ import EmptyList from "../../components/EmptyList";
 import AddTask from "../../components/Modal/AddTask";
 import Task from "../../components/Task";
 import useToggleModal from "../../hooks/useToggleModal";
-import { Select } from "antd";
+import { Button, Select } from "antd";
 
 const TodoList = () => {
   const {
-    tasksList,
     addNewTask,
     toggleTaskStatus,
     deleteTask,
     changeTextInTask,
     changeFilterTask,
     filterList,
+    saveList,
   } = useTodoList();
   const {
     isModalOpen: isAddTaskModalOpen,
@@ -52,8 +52,8 @@ const TodoList = () => {
           },
         ]}
       />
-      {!!tasksList.length ? (
-        tasksList.map((item) => (
+      {!!filterList.length ? (
+        filterList.map((item) => (
           <Task
             key={item.id}
             id={item.id}
@@ -67,6 +67,7 @@ const TodoList = () => {
       ) : (
         <EmptyList />
       )}
+      {filterList.length && <Button onClick={saveList}>Save Todo List</Button>}
     </TodoListStyles>
   );
 };
